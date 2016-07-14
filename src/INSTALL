@@ -1,0 +1,18 @@
+[root@localhost pam.d]# cat gnome-screensaver 
+#%PAM-1.0
+
+# Fedora Core
+auth     [success=done ignore=ignore default=bad] pam_selinux_permit.so
+auth    required	pam_exec.so debug log=/tmp/xs.log /usr/local/bin/tlock_screensaver -auth pam 500
+session    include	system-auth
+auth       include	system-auth
+auth       optional     pam_gnome_keyring.so
+account    include	system-auth
+password   include	system-auth
+
+# SuSE/Novell
+#auth       include      common-auth
+#auth       optional     pam_gnome_keyring.so
+#account    include      common-account
+#password   include      common-password
+#session    include      common-session
