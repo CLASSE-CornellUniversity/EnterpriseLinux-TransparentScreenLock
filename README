@@ -1,1 +1,5 @@
-Sample readme file for tlock project.
+Transparent Screenlock Program for Enterprise Linux.  Installations are configured with a list of groups that are permitted to unlock the screen on that computer.
+
+Inspired by e-motional.com's Transparent Screen Lock Security software for Windows Systems.
+
+Tested on EL6 and EL7.
