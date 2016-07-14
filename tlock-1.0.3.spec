@@ -1,12 +1,12 @@
 Name: tlock
 Summary: Transparent Lock for Linux
-Version: 1.0.2
+Version: 1.0.3
 Release: 1%{?dist}
 License: GPLv2+
 ExclusiveOS: linux
 
 Group: X11 Utilities
-URL: http://bitbucket.org/akaan/tlock
+URL: https://github.com/CLASSE-CornellUniversity/EnterpriseLinux-TransparentScreenLock
 Source: tlock-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
