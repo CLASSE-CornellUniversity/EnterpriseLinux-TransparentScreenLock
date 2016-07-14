@@ -1,4 +1,6 @@
-Transparent Screenlock Program for Enterprise Linux.  Installations are configured with a list of groups that are permitted to unlock the screen on that computer.
+Transparent Screenlock Program for Enterprise Linux
+
+Useful in kiosk or operational environments.  Installations are configured with a list of groups that are permitted to unlock the screen on that computer, and logs document who unlocked the screen when.
 
 Inspired by e-motional.com's Transparent Screen Lock Security software for Windows Systems.
 
