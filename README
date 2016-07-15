@@ -7,3 +7,7 @@ Inspired by e-motional.com's Transparent Screen Lock Security software for Windo
 Tested on EL6 and EL7.
 
 GPLv2
+
+Dependencies include xautolock 
+
+After installation, set the lock interval and what groups can unlock the screen by editing /etc/X11/xinit/xinitrc.d/60tlock.sh .
