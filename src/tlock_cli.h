@@ -27,8 +27,12 @@
 /* ----------------------------------------------------------------  *
  * PAM AUTHENTICATION DEFINITIONS
 /* ----------------------------------------------------------------  */
+#ifndef PAM_SERVICE_NAME
 #define PAM_SERVICE_NAME "unix"
+#endif
+#ifndef VERSION
 #define VERSION "1.0"
+#endif
 
 struct aAuth {
 	const char* name;
