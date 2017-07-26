@@ -198,7 +198,6 @@ static int tlock_auth_pam_auth(const char* username, const char* pass, int as_gi
 
 	pam_handle_t* pam_handle = NULL;
 	const char* user;
-	struct passwd *pwd;
 	gid_t gids[15 + 1];
 	int count, pam_error, ret, i;
 

@@ -95,10 +95,8 @@ static int authenticate(char *service, char *user, char *pass)
 static int tlock_auth_xspam_init(const char* args)
 {
 	errno = 0;
-	long grp = -1;
 	char* _temp = strdup(args);
 	char **gid_ptr;
-	char *endptr;
 
 	if (initialized)
 	{
@@ -124,7 +122,7 @@ static int tlock_auth_xspam_init(const char* args)
 		if (!pwd_xs_entry)
 		{
 			pwd_xs_entry = getpwuid(getuid());
-			_SYSLOG_("pwd entry by uid()=%s\n", getuid());
+			_SYSLOG_("pwd entry by uid()=%u\n", getuid());
 		}
 	}
 	if (!pwd_xs_entry)
@@ -170,10 +168,9 @@ static int tlock_auth_xspam_deinit()
 static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 {
 	char **gid_ptr;
-	struct passwd *pwd;
 	struct group *gr;
 	gid_t gids[15 + 1];
-	int count, pam_error, ret, i = 0;
+	int count, ret, i = 0;
 
 	_PRINTF_("entering %s = %s\n", strdup(user), strdup(pass));
 
@@ -236,7 +233,7 @@ static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 					_SYSLOG_("xs_auth_pam: gid[%d][%s]=%s\n", i, PAM_xs_username, *gid_ptr);
 					if ((gr = getgrgid(gids[i])) == NULL)
 					{
-						_SYSLOG_("xs_auth_pam: unable to get group for %s\n", gids[i]);
+						_SYSLOG_("xs_auth_pam: unable to get group for %u\n", gids[i]);
 						PAM_xs_username = NULL;
 						PAM_xs_password = NULL;
 						return 1;
