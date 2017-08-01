@@ -29,8 +29,8 @@ int main(int argc, char **argv)
 {
 
 	int arg = 0;
-	const char* password;
-	const char* user;
+	const char* password = NULL;
+	const char* user = NULL;
 	struct aOpts opts;
 	opts.auth = NULL;
 
@@ -48,8 +48,6 @@ int main(int argc, char **argv)
 				{
 
 					char* char_tmp;
-					char* auth_arg;
-					char* gid_arg;
 					struct aAuth* auth_tmp = NULL;
 					struct aAuth** i;
 

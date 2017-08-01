@@ -234,7 +234,6 @@ static void tlock_create_container(container_t* container,
         int height,
         int border_width)
 {
-	XSetWindowAttributes xswa;
 	container->x = 0;
 	if (x > 0)
 	{
@@ -278,16 +277,8 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
         int height,
         int border_width)
 {
-	int i = 0;
 	dialog_t* dialog;
 	XSetWindowAttributes xswa;
-
-	container_t* container;
-	unsigned long attrmask = 0;
-	int direction, ascent, descent;
-	XCharStruct overall;
-	Dimension max_string_width_px;
-	XGCValues gcv;
 
 	LOG_RENDER("create dialog structure");
 	/* create the pointer and memsize for the dialog */
@@ -523,7 +514,6 @@ void tlock_draw_dialog(struct aXInfo* xi,
         char* nameref,
         char* pwdref)
 {
-	int i = 0;
 	XGCValues gcv;
 	XColor tmp;
 
@@ -650,7 +640,6 @@ void tlock_hide_dialog(struct aXInfo* xi, dialog_t* dialog)
 
 void tlock_free_dialog(struct aXInfo* xi, dialog_t* dialog)
 {
-	int i;
 	if (!xi)
 	{
 		return;

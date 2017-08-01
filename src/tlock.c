@@ -64,7 +64,6 @@ static const char* tlock_color_swatch[] =
 	{ "gray", "blue", "white" };
 /* ---------------------------------------------------------------- */
 static struct timeval tlock_start_time;
-static int attempt = 2;
 
 /**
  *
@@ -180,8 +179,6 @@ static void visualFeedback(struct aXInfo* xi,
 	int redraw = 0;
 	int x = toggle % 2;
 
-	char *s;
-
 	if (old_mode != mode)
 	{
 		redraw = 1;
@@ -285,7 +282,6 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi)
 	char pwdref[STRING_LIMIT];
 	char shpwdref[STRING_LIMIT];
 	int i = 0;
-	int revert = 0;
 	int tabpos = -1;
 	char * const argv[] =
 		{ "/usr/bin/gnome-screensaver-command", "-l", NULL };
