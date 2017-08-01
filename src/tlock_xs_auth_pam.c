@@ -40,7 +40,7 @@ static int nulll_conv(int num_msg, const struct pam_message **msg, struct pam_re
 
 	// assign memory according the number of messages.
 	reply = (struct pam_response *) malloc(sizeof(struct pam_response));
-	reply[0].resp = PAM_xs_password;
+	reply[0].resp = (char *)PAM_xs_password;
 	reply[0].resp_retcode = 0;
 
 	*resp = reply;
@@ -96,7 +96,6 @@ static int tlock_auth_xspam_init(const char* args)
 {
 	errno = 0;
 	char* _temp = strdup(args);
-	char **gid_ptr;
 
 	if (initialized)
 	{
@@ -146,9 +145,9 @@ static int tlock_auth_xspam_init(const char* args)
 		}
 	}
 	ic = 1;
-	for (gid_ptr = &gid_entry[0]; *gid_ptr; *gid_ptr++)
+	for (ic = 0; gid_entry[ic] && ic < 10; ic++)
 	{
-		_SYSLOG_("xs_auth_pam.%s: group[%d]=%s\n", __FUNCTION__, ic++, *gid_ptr);
+		_SYSLOG_("xs_auth_pam.%s: group[%d]=%s\n", __FUNCTION__, ic, gid_entry[ic]);
 	}
 
 	initialized = 1;
@@ -167,16 +166,15 @@ static int tlock_auth_xspam_deinit()
 /* Main Sequence when PAM Auth gets invoked */
 static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 {
-	char **gid_ptr;
 	struct group *gr;
 	gid_t gids[15 + 1];
-	int count, ret, i = 0;
+	int count, ret, i, j = 0;
 
 	_PRINTF_("entering %s = %s\n", strdup(user), strdup(pass));
 
-	for (gid_ptr = &gid_entry[0]; *gid_ptr; *gid_ptr++)
+	for (i = 0; gid_entry[i] && i < 10; i++)
 	{
-		_SYSLOG_("xs_auth_pam: group[%d]=%s\n", i++, *gid_ptr);
+		_SYSLOG_("xs_auth_pam: group[%d]=%s\n", i, gid_entry[i]);
 	}
 
 	PAM_xs_username = user == NULL ? pwd_xs_entry->pw_name : user;
@@ -187,7 +185,7 @@ static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 	// groups delimited by comma
 	//fprintf(stderr, "xs_auth_pam: authenticate(%s=%s)\n", PAM_xs_username, PAM_xs_password);
 
-	if (authenticate(PAM_SERVICE_NAME, PAM_xs_username, PAM_xs_password) != PAM_SUCCESS)
+	if (authenticate(PAM_SERVICE_NAME, (char *)PAM_xs_username, (char *)PAM_xs_password) != PAM_SUCCESS)
 	{
 		_PRINT_;
 		PAM_xs_username = NULL;
@@ -215,12 +213,12 @@ static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 		{
 			_PRINTF_("xs_auth_pam: counting %d of %d\n", i, count);
 			_SYSLOG_("xs_auth_pam: getgrouplist %d: %u. %s\n", i, gids[i], gid_entry[0]);
-			for (gid_ptr = &gid_entry[0]; *gid_ptr; *gid_ptr++)
+			for (j = 0; gid_entry[j] && j < 10; j++)
 			{
 				if (as_gid)
 				{
-					_SYSLOG_("xs_auth_pam: gid[%d][%s]=%s (gid=%d)\n", i, PAM_xs_username, *gid_ptr, gids[i]);
-					int grp = atoi(*gid_ptr);
+					_SYSLOG_("xs_auth_pam: gid[%d][%s]=%s (gid=%d)\n", i, PAM_xs_username, gid_entry[j], gids[i]);
+					int grp = atoi(gid_entry[j]);
 					if ((unsigned) gids[i] == (unsigned) grp)
 					{
 						_SYSLOG_("xs_auth_pam: match found for %s in group %u == %u\n", PAM_xs_username, grp, gids[i]);
@@ -230,7 +228,7 @@ static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 					}
 				} else
 				{
-					_SYSLOG_("xs_auth_pam: gid[%d][%s]=%s\n", i, PAM_xs_username, *gid_ptr);
+					_SYSLOG_("xs_auth_pam: gid[%d][%s]=%s\n", i, PAM_xs_username, gid_entry[j]);
 					if ((gr = getgrgid(gids[i])) == NULL)
 					{
 						_SYSLOG_("xs_auth_pam: unable to get group for %u\n", gids[i]);
@@ -238,7 +236,7 @@ static int tlock_auth_xspam_auth(const char* user, const char* pass, int as_gid)
 						PAM_xs_password = NULL;
 						return 1;
 					}
-					if (strcmp(gr->gr_name, *gid_ptr) == 0)
+					if (strcmp(gr->gr_name, gid_entry[j]) == 0)
 					{
 						_SYSLOG_("xs_auth_pam: match found for %s in group %u\n", PAM_xs_username, gids[i]);
 						PAM_xs_username = NULL;

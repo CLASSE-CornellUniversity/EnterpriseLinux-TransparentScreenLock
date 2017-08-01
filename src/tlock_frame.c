@@ -160,7 +160,7 @@ struct aFrame* tlock_create_frame(struct aXInfo* xi,
 void tlock_free_frame(struct aXInfo* xi, struct aFrame* frame)
 {
 	struct aSide* side = (struct aSide*) &frame->top;
-	fprintf(stderr, "free frame display[%x]\n", xi->display);
+	fprintf(stderr, "free frame display[%p]\n", xi->display);
 	int i;
 
 	for (i = 0; i < 4; i++)

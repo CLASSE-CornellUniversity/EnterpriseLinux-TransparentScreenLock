@@ -428,26 +428,6 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 /* DRAW FUNCTIONS *
  *
  */
-static void draw_label(Display* display, container_t* parent, label_t label)
-{
-	XDrawRectangle(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        parent->x + label.container.x,
-	        parent->y + label.container.y,
-	        label.container.width,
-	        label.container.height);
-	XDrawString(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        parent->x + label.container.x,
-	        parent->y + label.container.y,
-	        label.text,
-	        strlen(label.text));
-
-}
 static void draw_field(Display* display,
         container_t* parent,
         field_t field,
@@ -586,10 +566,10 @@ void tlock_draw_dialog(struct aXInfo* xi,
 
 	XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
 
-	draw_field(xi->display, dialog, dialog->user_field, nameref, dialog->redraw);
-	draw_field(xi->display, dialog, dialog->password_field, pwdref, dialog->redraw);
-	draw_button(xi->display, dialog, dialog->clear_button);
-	draw_button(xi->display, dialog, dialog->cancel_button);
+	draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+	draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+	draw_button(xi->display, &dialog->container, dialog->clear_button);
+	draw_button(xi->display, &dialog->container, dialog->cancel_button);
 
 #ifdef RENDER_FLAG
 	LOG_RENDER("tlock: ended draw dialog");

@@ -283,9 +283,9 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi)
 	char shpwdref[STRING_LIMIT];
 	int i = 0;
 	int tabpos = -1;
-	char * const argv[] =
+	/*char * const argv[] =
 		{ "/usr/bin/gnome-screensaver-command", "-l", NULL };
-
+	*/
 	char * const focus[] =
 		{ nameref, pwdref, NULL };
 

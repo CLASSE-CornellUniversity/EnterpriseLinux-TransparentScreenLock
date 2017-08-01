@@ -16,6 +16,9 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 
+#ifndef VERSION
+#define VERSION "1.0"
+#endif
 
 #ifdef VERBOSE_FLAG
 #define LOG_VERBOSE printf( "%-20s:%-25s:%03d\n", __FILE__, __FUNCTION__,__LINE__ ); 
@@ -41,7 +44,7 @@
 #else
 #define DEBUG_EVENT_LOOP(s)
 #define DEBUG_EVENT_LOOP_BLANK
-#define DEBUG_FRAME
+#define DEBUG_FRAME(s) do {} while(0)
 #define DEBUG_AUTH(...)
 #endif
 
@@ -60,9 +63,8 @@
 
 /* ----------------------------------------------------------------  *
  * PAM AUTHENTICATION DEFINITIONS
- /* ----------------------------------------------------------------  */
+ * ----------------------------------------------------------------  */
 #define PAM_SERVICE_NAME "system-auth"
-#define VERSION "1.0"
 #define STRING_LIMIT 64
 
 struct aXInfo {
