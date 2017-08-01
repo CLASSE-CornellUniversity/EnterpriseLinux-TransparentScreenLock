@@ -1,0 +1,12 @@
+# ignore object files
+*.o
+
+# ignone autotools generated files
+.deps/
+config.log
+config.status
+Makefile
+
+# ignore binaries
+tlock
+tlock_cli
