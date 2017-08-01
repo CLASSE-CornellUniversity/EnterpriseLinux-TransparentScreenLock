@@ -60,10 +60,16 @@
 
 /* ----------------------------------------------------------------  *
  * PAM AUTHENTICATION DEFINITIONS
- /* ----------------------------------------------------------------  */
+ * ----------------------------------------------------------------  */
+#ifndef PAM_SERVICE_NAME
 #define PAM_SERVICE_NAME "system-auth"
+#endif
+#ifndef VERSION
 #define VERSION "1.0"
+#endif
+#ifndef STRING_LIMIT
 #define STRING_LIMIT 64
+#endif
 
 struct aXInfo {
 	Display* display;
