@@ -14,7 +14,7 @@
  
 UNLOCK_GROUPS="cmpgrp,root"
 
-TLOCK="/nfs/user/mr942/EnterpriseLinux-TransparentScreenLock/src/tlock"
+TLOCK="/usr/local/bin/tlock"
 XAUTOLOCK="/usr/X11R6/bin/xautolock"
 
 if [ -x $TLOCK ]; then
