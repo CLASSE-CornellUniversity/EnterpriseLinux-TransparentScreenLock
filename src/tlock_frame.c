@@ -43,13 +43,7 @@ struct aFrame {
 /* ---------------------------------------------------------------- *\
 \* ---------------------------------------------------------------- */
 
-struct aFrame* tlock_create_frame(struct aXInfo* xi,
-        int x,
-        int y,
-        int width,
-        int height,
-        int line_width)
-{
+struct aFrame* tlock_create_frame(struct aXInfo* xi, int x, int y, int width, int height, int line_width) {
 
 	Display* dpy = xi->display;
 	struct aFrame* frame;
@@ -149,33 +143,26 @@ struct aFrame* tlock_create_frame(struct aXInfo* xi,
 //    tlock_show_frame(frame);
 
 	side = (struct aSide*) &frame->top;
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		side[i].gc = XCreateGC(dpy, side[i].win, 0, 0);
 	}
 
 	return frame;
 }
 
-void tlock_free_frame(struct aXInfo* xi, struct aFrame* frame)
-{
+void tlock_free_frame(struct aXInfo* xi, struct aFrame* frame) {
 	struct aSide* side = (struct aSide*) &frame->top;
 	fprintf(stderr, "free frame display[%p]\n", xi->display);
 	int i;
 
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		XFreeGC(xi->display, side[i].gc);
 		XDestroyWindow(xi->display, side[i].win);
 	}
-
 	free(frame);
 }
 
-void tlock_draw_frame(struct aXInfo* xi,
-        struct aFrame* frame,
-        const char* color_name)
-{
+void tlock_draw_frame(struct aXInfo* xi, struct aFrame* frame, const char* color_name) {
 
 	struct aSide* side = (struct aSide*) &frame->top;
 	Display* dpy = xi->display;
@@ -184,8 +171,7 @@ void tlock_draw_frame(struct aXInfo* xi,
 	int i;
 
 	DEBUG_FRAME("draw frame");
-	if (!frame->visible)
-	{
+	if (!frame->visible) {
 		tlock_show_frame(xi, frame);
 	}
 #ifdef DEBUG_FLAG
@@ -194,13 +180,11 @@ void tlock_draw_frame(struct aXInfo* xi,
 
 	XAllocNamedColor(dpy, xi->colormap[0], color_name, &frame->color, &tmp);
 
-
 	DEBUG_FRAME("assign foreground color");
 	gcvals.foreground = frame->color.pixel;
 
 	DEBUG_FRAME("draw frame: 4 sides");
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		//LOG("gc: switch");
 		XChangeGC(dpy, side[i].gc, GCForeground, &gcvals);
 		XFillRectangle(
@@ -214,9 +198,7 @@ void tlock_draw_frame(struct aXInfo* xi,
 	}DEBUG_FRAME("tlock: ended draw frame");
 }
 
-void tlock_show_frame(struct aXInfo* xi, struct aFrame* frame)
-{
-
+void tlock_show_frame(struct aXInfo* xi, struct aFrame* frame) {
 	int i;
 	struct aSide* side = (struct aSide*) &frame->top;
 
@@ -225,26 +207,21 @@ void tlock_show_frame(struct aXInfo* xi, struct aFrame* frame)
 
 	DEBUG_FRAME("show frame");
 
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		XMapWindow(xi->display, side[i].win);
 		XRaiseWindow(xi->display, side[i].win);
 	}
-
 	frame->visible = 1;
 }
 
-void tlock_hide_frame(struct aXInfo* xi, struct aFrame* frame)
-{
-
+void tlock_hide_frame(struct aXInfo* xi, struct aFrame* frame) {
 	int i;
 	struct aSide* side = (struct aSide*) &frame->top;
 
 	if (!frame->visible)
 		return;
 
-	for (i = 0; i < 4; i++)
-	{
+	for (i = 0; i < 4; i++) {
 		XUnmapWindow(xi->display, side[i].win);
 	}
 

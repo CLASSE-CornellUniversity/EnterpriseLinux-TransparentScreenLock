@@ -27,9 +27,7 @@ struct aFrame* tlock_create_frame(struct aXInfo* xi,
         int width,
         int height,
         int line_width);
-void tlock_draw_frame(struct aXInfo* xi,
-        struct aFrame* frame,
-        const char* color_name);
+void tlock_draw_frame(struct aXInfo* xi, struct aFrame* frame, const char* color_name);
 void tlock_show_frame(struct aXInfo* xi, struct aFrame* frame);
 void tlock_hide_frame(struct aXInfo* xi, struct aFrame* frame);
 void tlock_free_frame(struct aXInfo* xi, struct aFrame* frame);

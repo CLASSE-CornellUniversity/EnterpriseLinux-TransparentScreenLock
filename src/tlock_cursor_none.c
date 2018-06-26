@@ -13,7 +13,6 @@
 #include "tlock.h"
 
 static int tlock_cursor_none_init(const char* args, struct aXInfo* xinfo) {
-
 	int scr;
 	for (scr = 0; scr < xinfo->nr_screens; scr++) {
 		xinfo->cursor[scr] = None;

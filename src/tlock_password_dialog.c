@@ -69,6 +69,7 @@ typedef struct aDialog {
 
 	button_t cancel_button;
 	button_t clear_button;
+	button_t login_button;
 
 	Bool passwd_changed_p; /* Whether the user entry field needs redrawing */
 	Bool caps_p; /* Whether we saw a keypress with caps-lock on */
@@ -81,167 +82,171 @@ typedef struct aDialog {
 #define MAX_BYTES_PER_CHAR 8	/* UTF-8 uses no more than 3, I think */
 #define MAX_PASSWD_CHARS   128	/* Longest possible passphrase */
 
-Window get_dialog_window(struct aDialog* dialog)
-{
+Window get_dialog_window(struct aDialog* dialog) {
 	return dialog->container.win;
 }
 
-void XSelectInputDialog(Display* dsp, dialog_t* dialog)
-{
+void XSelectInputDialog(Display* dsp, dialog_t* dialog) {
 	XSelectInput(dsp, dialog->container.win,
 	ButtonPressMask | ButtonReleaseMask);
 }
 
-Bool is_area_pressed(struct aDialog* dialog, const char* name, int x, int y)
-{
+Bool is_area_pressed(struct aDialog* dialog, const char* name, int x, int y) {
 #ifdef VERBOSE_FLAG
 	fprintf(	stderr, "event @  coord[%d,%d] %s\n", x, y, name);
 #endif
 
-	if (strcmp("cancel_button", name) == 0)
-	{
+	if (strcmp("cancel_button", name) == 0) {
 		if (x > dialog->container.x + dialog->cancel_button.container.x //
-		&& x < dialog->container.x + dialog->cancel_button.container.x + dialog
-		    ->cancel_button.container.width //
-		&& y > dialog->container.y + dialog->cancel_button.container.y + dialog
-		    ->cancel_button.container.padding //
-		&& y < dialog->container.y + dialog->cancel_button.container.y + dialog
-		    ->cancel_button.container.height + dialog->cancel_button
-		    .container.padding + dialog->cancel_button.container.font
-		    .ascent)
-		{
-
+		    && x < dialog->container.x + dialog->cancel_button.container.x
+			 + dialog->cancel_button.container.width //
+		    && y > dialog->container.y + dialog->cancel_button.container.y
+			 + dialog->cancel_button.container.padding //
+		    && y < dialog->container.y + dialog->cancel_button.container.y
+			 + dialog->cancel_button.container.height
+			 + dialog->cancel_button.container.padding
+			 + dialog->cancel_button.container.font.ascent) {
 #ifdef VERBOSE_FLAG
 			LOG_RENDER(
 			        "##############switch_button_pressed @ coord[%d,%d]\n",
 			        x,
 			        y);
 #endif
-
 			dialog->cancel_button.button_down_p = 1;
 			return True;
 
 		}
 		dialog->cancel_button.button_down_p = 0;
-	} else
-	{
-		if (strcmp("clear_button", name) == 0)
-		{
-			/*
-			 * field.container.padding,
-			 field.container.y + field.container.font.ascent + field.container.padding,
-			 */
-			if (x > dialog->container.x + dialog->clear_button.container.x //
-			&& x < dialog->container.x + dialog->clear_button.container.x + dialog
-			    ->clear_button.container.width //
-			&& y > dialog->container.y + dialog->clear_button.container.y + dialog
-			    ->clear_button.container.padding //
-			&& y < dialog->container.y + dialog->clear_button.container.y + dialog
-			    ->clear_button.container.height + dialog->clear_button
-			    .container.padding + dialog->clear_button.container.font.ascent)
-			{
+	} else if (strcmp("clear_button", name) == 0) {
+		/*
+		 * field.container.padding, field.container.y + field.container.font.ascent + field.container.padding. 
+		 */
+		if (x > dialog->container.x + dialog->clear_button.container.x
+		    && x < dialog->container.x + dialog->clear_button.container.x
+			 + dialog->clear_button.container.width //
+		    && y > dialog->container.y + dialog->clear_button.container.y
+			 + dialog->clear_button.container.padding //
+		    && y < dialog->container.y + dialog->clear_button.container.y
+			 + dialog->clear_button.container.height
+			 + dialog->clear_button.container.padding
+			 + dialog->clear_button.container.font.ascent) {
 #ifdef VERBOSE_FLAG
-				fprintf(
-				        stderr,
-				        "##############clear_button_pressed @ coord[%d,%d]\n",
-				        x,
-				        y);
+			fprintf(
+			        stderr,
+			        "##############clear_button_pressed @ coord[%d,%d]\n",
+			        x,
+			        y);
 #endif
-				dialog->clear_button.button_down_p = 1;
-				return True;
-
-			}
-			dialog->clear_button.button_down_p = 0;
-		} else
-		{
-			if (strcmp("user_field", name) == 0)
-			{
-				if (x > dialog->container.x + dialog->user_field.container.x && //
-				x < dialog->container.x + dialog->user_field.container.width + dialog
-				    ->user_field.container.x && //
-				y > dialog->container.y + dialog->user_field.container.y + dialog
-				    ->user_field.container.padding && //
-				y < dialog->container.y + dialog->user_field.container.y + dialog
-				    ->user_field.container.height + dialog->user_field.container
-				    .padding + dialog->user_field.container.font.ascent
-
-				)
-				{
+			dialog->clear_button.button_down_p = 1;
+			return True;
+		}
+	} else if (strcmp("login_button", name) == 0) {
+		/*
+		 * field.container.padding, field.container.y + field.container.font.ascent + field.container.padding. 
+		 */
+		if (x > dialog->container.x + dialog->login_button.container.x
+		    && x < dialog->container.x + dialog->login_button.container.x
+			 + dialog->login_button.container.width //
+		    && y > dialog->container.y + dialog->login_button.container.y
+			 + dialog->login_button.container.padding //
+		    && y < dialog->container.y + dialog->login_button.container.y
+			 + dialog->login_button.container.height
+			 + dialog->login_button.container.padding
+			 + dialog->login_button.container.font.ascent) {
 #ifdef VERBOSE_FLAG
-					fprintf(
-					        stderr,
-					        "##############user_field_pressed @ coord[%d,%d]\n",
-					        x,
-					        y);
-					fprintf(
-					        stderr,
-					        " x0 = %d, x1 = %d\n",
-					        dialog->container.x + dialog->user_field.container.x,
-					        dialog->container.x + dialog->user_field.container.x + dialog
-					            ->user_field.container.width);
-					fprintf(
-					        stderr,
-					        " y0 = %d, y1 = %d\n",
-					        dialog->container.y + dialog->user_field.container.y,
-					        dialog->container.y + dialog->user_field.container.y + dialog
-					            ->user_field.container.height);
+			fprintf(
+			        stderr,
+			        "##############login_button_pressed @ coord[%d,%d]\n",
+			        x,
+			        y);
 #endif
-					return True;
-				}
-			} else
-			{
-				if (strcmp("password_field", name) == 0)
-				{
-					if (x > dialog->container.x + dialog->password_field
-					    .container.x && x < dialog->container.x + dialog
-					    ->password_field.container.width + dialog
-					    ->password_field.container.x && y > dialog->container.y + dialog
-					    ->password_field.container.y + dialog->password_field
-					    .container.padding && y < dialog->container.y + dialog
-					    ->password_field.container.y + dialog->password_field
-					    .container.height + dialog->password_field.container
-					    .font.ascent)
-					{
+			dialog->login_button.button_down_p = 1;
+			return True;
+		}
+	} else if (strcmp("user_field", name) == 0) {
+		if (x > dialog->container.x + dialog->user_field.container.x //
+		    && x < dialog->container.x + dialog->user_field.container.width
+			 + dialog->user_field.container.x //
+		    && y > dialog->container.y + dialog->user_field.container.y
+			 + dialog->user_field.container.padding //
+		    && y < dialog->container.y + dialog->user_field.container.y
+			 + dialog->user_field.container.height
+			 + dialog->user_field.container.padding
+			 + dialog->user_field.container.font.ascent) {
 #ifdef VERBOSE_FLAG
-						fprintf(
-						        stderr,
-						        "##############password_field_pressed @ coord[%d,%d]\n",
-						        x,
-						        y);
+			fprintf(
+			        stderr,
+			        "##############user_field_pressed @ coord[%d,%d]\n",
+			        x,
+			        y);
+			fprintf(
+			        stderr,
+			        " x0 = %d, x1 = %d\n",
+			        dialog->container.x + dialog->user_field.container.x,
+			        dialog->container.x + dialog->user_field.container.x
+				 + dialog->user_field.container.width);
+			fprintf(
+			        stderr,
+			        " y0 = %d, y1 = %d\n",
+			        dialog->container.y + dialog->user_field.container.y,
+			        dialog->container.y + dialog->user_field.container.y
+				 + dialog->user_field.container.height);
 #endif
-						return True;
-					}
-				}
-			}
+			return True;
+		}
+	} else if (strcmp("password_field", name) == 0) {
+		if (x > dialog->container.x + dialog->password_field.container.x 
+		    && x < dialog->container.x + dialog->password_field.container.width
+			 + dialog->password_field.container.x 
+		    && y > dialog->container.y + dialog->password_field.container.y
+			 + dialog->password_field.container.padding 
+		    && y < dialog->container.y + dialog->password_field.container.y
+			 + dialog->password_field.container.height
+			 + dialog->password_field.container.font.ascent) {
+#ifdef VERBOSE_FLAG
+			fprintf(
+			        stderr,
+			        "##############password_field_pressed @ coord[%d,%d]\n",
+			        x,
+			        y);
+			fprintf(
+			        stderr,
+			        " x0 = %d, x1 = %d\n",
+			        dialog->container.x + dialog->password_field.container.x,
+			        dialog->container.x + dialog->password_field.container.x
+				 + dialog->password_field.container.width);
+			fprintf(
+			        stderr,
+			        " y0 = %d, y1 = %d\n",
+			        dialog->container.y + dialog->password_field.container.y,
+			        dialog->container.y + dialog->password_field.container.y
+				 + dialog->password_field.container.height);
 
+#endif
+			return True;
 		}
 	}
 	return False;
 }
-void flag_redraw(dialog_t* dialog)
-{
-	if (dialog)
-	{
+void flag_redraw(dialog_t* dialog) {
+	if (dialog) {
 		dialog->redraw = True;
 	}
 }
 
 static void tlock_create_container(container_t* container,
-        struct aXInfo* xi,
-        int x,
-        int y,
-        int width,
-        int height,
-        int border_width)
-{
+		struct aXInfo* xi,
+		int x,
+		int y,
+		int width,
+		int height,
+		int border_width) {
 	container->x = 0;
-	if (x > 0)
-	{
+	if (x > 0) {
 		container->x = x;
 	}
 	container->y = 0;
-	if (y > 0)
-	{
+	if (y > 0) {
 		container->y = y;
 	};
 
@@ -271,12 +276,11 @@ static void tlock_create_container(container_t* container,
  *
  */
 dialog_t* tlock_create_dialog(struct aXInfo* xi,
-        int x,
-        int y,
-        int width,
-        int height,
-        int border_width)
-{
+		int x,
+		int y,
+		int width,
+		int height,
+		int border_width) {
 	dialog_t* dialog;
 	XSetWindowAttributes xswa;
 
@@ -284,8 +288,7 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	/* create the pointer and memsize for the dialog */
 	dialog = (dialog_t*) calloc(1, sizeof(dialog_t));
 
-	if (dialog == 0)
-	{
+	if (dialog == 0) {
 		return 0;
 	};
 
@@ -293,7 +296,6 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	("create dialog container");
 #endif
 	tlock_create_container(&dialog->container, xi, x, y, width, height, 1);
-
 
 #ifdef RENDER_FLAG
 	fprintf(
@@ -308,8 +310,7 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	        dialog->container.height);
 #endif
 
-	xswa.event_mask =
-	KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask;
+	xswa.event_mask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask;
 	xi->dialog_window = dialog->container.win;
 	dialog->container.win = XCreateWindow(
 	        xi->display,
@@ -347,8 +348,8 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	        &dialog->user_field.container,
 	        xi,
 	        15,
-	        15,
-	        270,
+	        20,
+	        245,
 	        20,
 	        1);
 	dialog->user_field.text = strdup("Username");
@@ -381,8 +382,8 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	        &dialog->password_field.container,
 	        xi,
 	        15,
-	        50,
-	        270,
+	        60,
+	        245,
 	        20,
 	        1);
 	dialog->password_field.text = strdup("Password");
@@ -390,103 +391,117 @@ dialog_t* tlock_create_dialog(struct aXInfo* xi,
 	dialog->password_field.container.background = XWhitePixel(xi->display, 0);
 	dialog->password_field.container.foreground = XBlackPixel(xi->display, 0);
 
-	/* switch user button */
+	/* login button */
+	tlock_create_container(
+	        &dialog->login_button.container,
+	        xi,
+	        15,
+	        95,
+	        75,
+	        20,
+	        1);
+	dialog->login_button.text = strdup("Login");
+	dialog->login_button.container.background = XWhitePixel(xi->display,0);
+	dialog->login_button.container.foreground = XBlackPixel(xi->display,0);
+
+	/* clear button*/
 	tlock_create_container(
 	        &dialog->clear_button.container,
 	        xi,
-	        15,
+	        100,
+	        95,
 	        75,
-	        80,
 	        20,
 	        1);
 	dialog->clear_button.text = strdup("Clear");
 	dialog->clear_button.container.background = XWhitePixel(xi->display, 0);
 	dialog->clear_button.container.foreground = XBlackPixel(xi->display, 0);
 
-	/* switch user button */
+	/* cancel button */
 	tlock_create_container(
 	        &dialog->cancel_button.container,
 	        xi,
-	        100,
+	        185,
+	        95,
 	        75,
-	        80,
 	        20,
 	        1);
 	dialog->cancel_button.text = strdup("Cancel");
-	dialog->cancel_button.container.background = XWhitePixel(
-	        xi->display,
-	        0);
-	dialog->cancel_button.container.foreground = XBlackPixel(
-	        xi->display,
-	        0);
+	dialog->cancel_button.container.background = XWhitePixel(xi->display,0);
+	dialog->cancel_button.container.foreground = XBlackPixel(xi->display,0);
+
+	
 
 	LOG_RENDER("created dialog");
 
 	return dialog;
 }
 
-/* DRAW FUNCTIONS *
- *
- */
+/* DRAW FUNCTIONS */
 static void draw_field(Display* display,
-        container_t* parent,
-        field_t field,
-        char *value, int redraw)
-{
-	if (redraw) {
-	XFillRectangle(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        /*parent->x +*/field.container.x,
-	        /*parent->y +*/field.container.y,
-	        field.container.width,
-	        field.container.height);
-	}
-	XDrawRectangle(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        /*parent->x +*/field.container.x,
-	        /*parent->y +*/field.container.y,
-	        field.container.width,
-	        field.container.height);
-	XDrawString(display, parent->win, parent->gc,
-	/*parent->x +*/field.container.x,
-	/*parent->y +*/field.container.y, field.text, strlen(field.text));
+		container_t* parent,
+		field_t field,
+		char *value, int redraw) {
 
+	if (redraw) {
+		XFillRectangle(
+			display,
+			parent->win,
+			parent->gc,
+			field.container.x,
+			field.container.y,
+			field.container.width,
+			field.container.height);
+	}
+	
+	//draw text box field
+	XDrawRectangle(
+		display,
+		parent->win,
+		parent->gc,
+		field.container.x,
+		field.container.y + 5,	//padding
+		field.container.width,
+		field.container.height);
+	//draw label of text box
 	XDrawString(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        /*parent->x +*/field.container.x + field.container.padding,
-	        /*parent->y +*/field.container.y + field.container.font.ascent + field
-	            .container.padding,
-	        value,
-	        strlen(value));
+		display,
+		parent->win,
+		parent->gc,
+		field.container.x,
+		field.container.y,
+		field.text,
+		strlen(field.text));
+	//draw text within textbox
+	XDrawString(
+		display,
+		parent->win,
+		parent->gc,
+		field.container.x + field.container.padding,
+		field.container.y + field.container.font.ascent + field.container.padding + 5,
+		value,
+		strlen(value));
 
 }
-static void draw_button(Display* display, container_t* parent, button_t button)
-{
+
+static void draw_button(Display* display, container_t* parent, button_t button) {
 	XDrawRectangle(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        button.container.x,
-	        button.container.y,
-	        button.container.width,
-	        button.container.height);
+		display,
+		parent->win,
+		parent->gc,
+		button.container.x,
+		button.container.y,
+		button.container.width,
+		button.container.height);
 
 	XDrawString(
-	        display,
-	        parent->win,
-	        parent->gc,
-	        button.container.x + button.container.padding,
-	        button.container.y + button.container.font.ascent + button.container
-	            .padding,
-	        button.text,
-	        strlen(button.text));
-
+		display,
+		parent->win,
+		parent->gc,
+		button.container.x + button.container.padding,
+		button.container.y + button.container.font.ascent + button.container.padding,
+		button.text,
+		strlen(button.text));
 }
 
 void tlock_draw_dialog(struct aXInfo* xi,
@@ -541,7 +556,7 @@ void tlock_draw_dialog(struct aXInfo* xi,
 	XAllocNamedColor(
 	        xi->display,
 	        xi->colormap[0],
-	        "yellow",
+	        "white",
 	        &dialog->container.color,
 	        &tmp);
 	gcv.foreground = dialog->container.color.pixel;
@@ -556,20 +571,100 @@ void tlock_draw_dialog(struct aXInfo* xi,
 	        dialog->container.width,
 	        dialog->container.height);
 
-//	XAllocNamedColor(
-//	        xi->display,
-//	        xi->colormap[0],
-//	        "yellow",
-//	        &dialog->user_field.container.color,
-//	        &tmp);
-//	gcv.foreground = dialog->user_field.container.color.pixel;
+	XAllocNamedColor(
+	        xi->display,
+	        xi->colormap[0],
+	        "white",
+	        &dialog->user_field.container.color,
+	        &tmp);
+	gcv.foreground = dialog->user_field.container.color.pixel;
 
 	XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
 
-	draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
-	draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
-	draw_button(xi->display, &dialog->container, dialog->clear_button);
-	draw_button(xi->display, &dialog->container, dialog->cancel_button);
+	switch (tabpos) {
+		case 0:
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			XAllocNamedColor(
+	        		xi->display,
+	        		xi->colormap[0],
+	        		"yellow",
+	        		&dialog->container.color,
+	        		&tmp);
+			gcv.foreground = dialog->container.color.pixel;
+			XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			break;
+		case 1:
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			XAllocNamedColor(
+	        		xi->display,
+	        		xi->colormap[0],
+	        		"yellow",
+	        		&dialog->container.color,
+	        		&tmp);
+			gcv.foreground = dialog->container.color.pixel;
+			XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			break;
+		case 2:
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			XAllocNamedColor(
+	        		xi->display,
+	        		xi->colormap[0],
+	        		"yellow",
+	        		&dialog->container.color,
+	        		&tmp);
+			gcv.foreground = dialog->container.color.pixel;
+			XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			break;
+		case 3:
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			XAllocNamedColor(
+	        		xi->display,
+	        		xi->colormap[0],
+	        		"yellow",
+	        		&dialog->container.color,
+	        		&tmp);
+			gcv.foreground = dialog->container.color.pixel;
+			XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			break;
+		case 4:
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			XAllocNamedColor(
+	        		xi->display,
+	        		xi->colormap[0],
+	        		"yellow",
+	        		&dialog->container.color,
+	        		&tmp);
+			gcv.foreground = dialog->container.color.pixel;
+			XChangeGC(xi->display, dialog->container.gc, GCForeground, &gcv);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			break;
+		default:
+			draw_field(xi->display, &dialog->container, dialog->user_field, nameref, dialog->redraw);
+			draw_field(xi->display, &dialog->container, dialog->password_field, pwdref, dialog->redraw);
+			draw_button(xi->display, &dialog->container, dialog->login_button);
+			draw_button(xi->display, &dialog->container, dialog->clear_button);
+			draw_button(xi->display, &dialog->container, dialog->cancel_button);
+			break;
+	}
 
 #ifdef RENDER_FLAG
 	LOG_RENDER("tlock: ended draw dialog");

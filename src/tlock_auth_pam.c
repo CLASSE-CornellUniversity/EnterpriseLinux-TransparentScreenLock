@@ -56,14 +56,13 @@ static int PAM_error = 0;
 
 /* PAM_putText - method to have pam_converse functionality with in XLOCK */
 static void PAM_putText(const struct pam_message *msg,
-		struct pam_response *resp, Bool PAM_echokeys) {
+			struct pam_response *resp, Bool PAM_echokeys) {
 	(void) printf("PAM_putText: message of style %d received: (%s)\n",
 			msg->msg_style, msg->msg);
 }
 
 static int PAM_conv(int num_msg, const struct pam_message **msgs,
-		struct pam_response **resp, void *appdata_ptr) {
-
+		    struct pam_response **resp, void *appdata_ptr) {
 	int count = 0;
 	unsigned int replies = 0U;
 	struct pam_response *reply = NULL;
@@ -94,66 +93,63 @@ static int PAM_conv(int num_msg, const struct pam_message **msgs,
 		(void) printf(" + Message is: (%s)\n", msgs[replies]->msg);
 #endif
 		switch (msgs[count]->msg_style) {
-		case PAM_PROMPT_ECHO_ON:
+			case PAM_PROMPT_ECHO_ON:
 #ifdef DEBUG_FLAG
-			(void) printf(" + Message style: PAM_PROMPT_ECHO_ON\n");
+				(void) printf(" + Message style: PAM_PROMPT_ECHO_ON\n");
 #endif
-			GET_MEM
-			;
-			memset(&reply[replies], 0, sizeof reply[replies]);
-			if ((reply[replies].resp = strdup(PAM_username)) == NULL) {
+				GET_MEM;
+				memset(&reply[replies], 0, sizeof reply[replies]);
+				if ((reply[replies].resp = strdup(PAM_username)) == NULL) {
 #ifdef PAM_BUF_ERR
-				reply[replies].resp_retcode = PAM_BUF_ERR;
+					reply[replies].resp_retcode = PAM_BUF_ERR;
 #endif
+					PAM_error = 1;
+					return PAM_CONV_ERR;
+				}
+				reply[replies++].resp_retcode = PAM_SUCCESS;
+				/* PAM frees resp */
+				break;
+			case PAM_PROMPT_ECHO_OFF:
+#ifdef DEBUG_FLAG
+				(void) printf(" + Message style: PAM_PROMPT_ECHO_OFF\n");
+#endif
+				GET_MEM;
+				memset(&reply[replies], 0, sizeof reply[replies]);
+				if ((reply[replies].resp = strdup(PAM_password)) == NULL) {
+#ifdef PAM_BUF_ERR
+					reply[replies].resp_retcode = PAM_BUF_ERR;
+#endif
+					PAM_error = 1;
+					return PAM_CONV_ERR;
+				}
+				reply[replies++].resp_retcode = PAM_SUCCESS;
+				/* PAM frees resp */
+				break;
+			case PAM_TEXT_INFO:
+#ifdef DEBUG_FLAG
+				(void) printf(" + Message style: PAM_TEXT_INFO\n");
+#endif
+				if (strstr(msgs[replies]->msg, "Password") == NULL) {
+					PAM_putText(msgs[replies], &reply[replies], False);
+				}
+				/* PAM frees resp */
+				break;
+			case PAM_ERROR_MSG:
+#ifdef DEBUG_FLAG
+				(void) printf(" + Message style: PAM_ERROR_MSG\n");
+#endif
+				if (strstr(msgs[replies]->msg, "Password") == NULL) {
+					PAM_putText(msgs[replies], &reply[replies], False);
+				}
+				/* PAM frees resp */
+				break;
+			default: /* Must be an error of some sort... */
+#ifdef DEBUG_FLAG
+				(void) printf(" + Message style: unknown\n");
+#endif
+				free(reply);
 				PAM_error = 1;
 				return PAM_CONV_ERR;
-			}
-			reply[replies++].resp_retcode = PAM_SUCCESS;
-			/* PAM frees resp */
-			break;
-		case PAM_PROMPT_ECHO_OFF:
-#ifdef DEBUG_FLAG
-			(void) printf(" + Message style: PAM_PROMPT_ECHO_OFF\n");
-#endif
-			GET_MEM
-			;
-			memset(&reply[replies], 0, sizeof reply[replies]);
-			if ((reply[replies].resp = strdup(PAM_password)) == NULL) {
-#ifdef PAM_BUF_ERR
-				reply[replies].resp_retcode = PAM_BUF_ERR;
-#endif
-				PAM_error = 1;
-				return PAM_CONV_ERR;
-			}
-			reply[replies++].resp_retcode = PAM_SUCCESS;
-			/* PAM frees resp */
-			break;
-		case PAM_TEXT_INFO:
-#ifdef DEBUG_FLAG
-			(void) printf(" + Message style: PAM_TEXT_INFO\n");
-#endif
-			if (strstr(msgs[replies]->msg, "Password") == NULL) {
-				PAM_putText(msgs[replies], &reply[replies], False);
-			}
-			/* PAM frees resp */
-			break;
-		case PAM_ERROR_MSG:
-#ifdef DEBUG_FLAG
-			(void) printf(" + Message style: PAM_ERROR_MSG\n");
-#endif
-			if (strstr(msgs[replies]->msg, "Password") == NULL) {
-				PAM_putText(msgs[replies], &reply[replies], False);
-			}
-			/* PAM frees resp */
-			break;
-		default:
-			/* Must be an error of some sort... */
-#ifdef DEBUG_FLAG
-			(void) printf(" + Message style: unknown\n");
-#endif
-			free(reply);
-			PAM_error = 1;
-			return PAM_CONV_ERR;
 		}
 #ifdef DEBUG_FLAG
 		(void) printf(" + Response is: (%s). Return Code is: (%d)\n",
@@ -187,9 +183,7 @@ static int tlock_auth_pam_init(const char* args) {
 }
 
 static int tlock_auth_pam_deinit() {
-
 	pwd_entry = NULL;
-
 	return 0;
 }
 
@@ -201,19 +195,15 @@ static int tlock_auth_pam_auth(const char* username, const char* pass, int as_gi
 	gid_t gids[15 + 1];
 	int count, pam_error, ret, i;
 
-
-
 	if (!pass || strlen(pass) < 1 || !pwd_entry)
 		return 0;
 
 	PAM_username = pwd_entry->pw_name;
 	PAM_password = pass;
 
-	fprintf(stderr, "auth: starting pam_conv(%s)\n",
-	PAM_SERVICE_NAME);
+	fprintf(stderr, "auth: starting pam_conv(%s)\n", PAM_SERVICE_NAME);
 
-	pam_error = pam_start(PAM_SERVICE_NAME, PAM_username, &PAM_conversation,
-			&pam_handle);
+	pam_error = pam_start(PAM_SERVICE_NAME, PAM_username, &PAM_conversation, &pam_handle);
 	PAM_EXCEPTION;
 	pam_error = pam_set_item(pam_handle, PAM_TTY, ttyname(0));
 	PAM_EXCEPTION;
