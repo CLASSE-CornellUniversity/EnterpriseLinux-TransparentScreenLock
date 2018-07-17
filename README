@@ -15,5 +15,7 @@ After installation, set the lock interval and what groups can unlock the screen 
 When the screen is locked, a grey border will appear around your desktop.  
 - Press any key to bring up the unlock dialogue.
 - Type in your username.
-- Press the tab key to move to the Password field, and type in your password.
-- Press the enter key to unlock the screen.
+- Press the tab key or click to move to the Password field, and type in your password.
+- Press the enter key or click the Login button to unlock the screen.
+- The clear button will clear the entries in the Username and Password fields.
+- The cancel button will exit the unlock dialogue.
