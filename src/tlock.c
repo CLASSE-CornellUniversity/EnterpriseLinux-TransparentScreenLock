@@ -248,6 +248,7 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 	int i = 0;
 	int active_field = 0;
 	tabpos = 0;	//default tab position to user field
+	int shift = 0;
 
 	/*char * const argv[] =
 		{ "/usr/bin/gnome-screensaver-command", "-l", NULL };
@@ -298,17 +299,29 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 					clen = XLookupString(&ev.xkey, cbuf, 15, &ks, 0);
 					_PRINTF_( "key=%c \n", cbuf[0]);
 					switch (ks) {
+						case XK_Shift_L:
+							shift = 1;
+							break;
+						case XK_Shift_R:
+							shift = 1;
+							break;
 						case XK_Tab:
 						//user pressed the TAB key
-							tabpos = (tabpos + 1) % 5;
+							if (shift == 1) { //want to go backwards
+								int temp = (tabpos - 1) % 5;
+								tabpos = (temp < 0) ? temp + 5 : temp;
+							} else {
+								tabpos = (tabpos + 1) % 5;
+							}
 							if (tabpos < 2) {
 							//enter text into fields
-								active_field = (active_field+1) % 2;
+								active_field = tabpos; //active field is the one where tab position is
 								rlen = strlen(focus[active_field]);
 								flag_redraw(dialog);
 								_PRINTF_( "TAB_: active_field = %d, %d = %s\n", active_field, rlen, focus[active_field] );
 								visualFeedback(xi, dialog, frame, mode, toggle, nameref, shpwdref);
 							}
+							shift = 0;
 							break;
 						case XK_Escape:
 						case XK_Clear:
@@ -335,6 +348,7 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 								visualFeedback(xi, dialog, frame, mode, toggle, nameref, shpwdref);
 								_PRINTF_("BACK: active_field = %d, %d = %s\n", active_field, rlen, focus[active_field] );
 							}
+							shift = 0;
 							break;
 						case XK_Linefeed:
 						case XK_Return:
@@ -397,6 +411,7 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 								mode = WRONG;
 								timeout = elapsedTime() + penalty;
 							}
+							shift = 0;
 							break;
 						default: //typing a character (or any other key)
 							if (tabpos < 2) {
@@ -412,6 +427,7 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 									rlen++;
 								}
 							}
+							shift = 0;
 							break;
 					} //end keypress switch statement
 				} //case KeyPress end
@@ -424,9 +440,10 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 				}//case Expose end
 					break;
 				case ButtonPress: {
-				}
+				} //case Buttonpress end
 					break;
 				case ButtonRelease: {
+					shift = 0;
 					if (BUTTON_PRESSED("user_field")) { //clicking into the username field
 						active_field = 0;
 						tabpos = 0;

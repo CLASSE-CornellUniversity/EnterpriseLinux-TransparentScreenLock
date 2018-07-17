@@ -144,7 +144,7 @@ static int tlock_auth_xspam_init(const char* args)
 			gid_entry[ic] = 0;
 		}
 	}
-	ic = 1;
+	//ic = 1;
 	for (ic = 0; gid_entry[ic] && ic < 10; ic++)
 	{
 		_SYSLOG_("xs_auth_pam.%s: group[%d]=%s\n", __FUNCTION__, ic, gid_entry[ic]);
