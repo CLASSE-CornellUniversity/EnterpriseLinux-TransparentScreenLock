@@ -3,9 +3,16 @@
 
 # ignone autotools generated files
 .deps/
-config.log
-config.status
+autom4te.cache/
 Makefile
+Makefile.in
+aclocal.m4
+config.*
+configure
+depcomp
+install-sh
+missing
+tlock.spec
 
 # ignore binaries
 tlock

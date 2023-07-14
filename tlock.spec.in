@@ -1,6 +1,6 @@
 Name: tlock
 Summary: Transparent Lock for Linux
-Version: 1.0.3
+Version: @VERSION@
 Release: 1%{?dist}
 License: GPLv2+
 ExclusiveOS: linux
@@ -10,7 +10,10 @@ URL: https://github.com/CLASSE-CornellUniversity/EnterpriseLinux-TransparentScre
 Source: tlock-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+Requires: xautolock
 BuildRequires: gcc
+BuildRequires: libXt-devel
+BuildRequires: pam-devel
 
 %description
 The "Transparent Lock" program...
@@ -33,7 +36,6 @@ install -m 755 bin/60tlock.sh $RPM_BUILD_ROOT/%{_sysconfdir}/X11/xinit/xinitrc.d
 %files
 %defattr(755,root,root,755)
 %doc
-# Don't own /srv/, but own directories:
 %dir /usr/
 %dir /usr/local/
 %dir /usr/local/bin/
@@ -51,6 +53,9 @@ rm -rf %{buildroot}
 %post
 
 %changelog
+* Fri July 14 2023 Phillip Sorensen <pas37@cornell.edu>
+- Add Requires and additional BuildRequires
+
 * Sun May 4 2014 Andre Kaan <visitbethel@gmail.com> - 1.0.1
 - added distribution of the /etc/X11/xinit/xinitrc.d/60tlock.sh
 
