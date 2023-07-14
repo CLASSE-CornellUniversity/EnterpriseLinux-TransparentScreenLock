@@ -67,7 +67,7 @@
 #define PAM_SERVICE_NAME "system-auth"
 #define STRING_LIMIT 64
 
-int tabpos;
+extern int tabpos;
 
 struct aXInfo {
 	Display* display;
