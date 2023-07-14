@@ -1,4 +1,5 @@
 SUBDIRS=src
+EXTRA_DIST=bin
 
 PHONY: gitclean
 gitclean: distclean
