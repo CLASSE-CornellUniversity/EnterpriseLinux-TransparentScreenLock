@@ -15,7 +15,7 @@
 UNLOCK_GROUPS="cmpgrp,root"
 
 TLOCK="/usr/local/bin/tlock"
-XAUTOLOCK="/usr/X11R6/bin/xautolock"
+XAUTOLOCK="/usr/bin/xautolock"
 
 if [ -x $TLOCK ]; then
 	TLOCK="$TLOCK -auth xspam,${UNLOCK_GROUPS}"
@@ -25,4 +25,4 @@ if [ -x $TLOCK ]; then
 	else
 		$TLOCK
 	fi
-fi 
+fi
