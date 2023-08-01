@@ -270,8 +270,10 @@ static int eventLoop(struct aOpts* opts, struct aXInfo* xi) {
 	int hor = xi->height_of_root[0];
 	int dwidth = 275;
 	int dheight = 130;
-	//placing the dialog in the middle might make it ugly or sth for people with multiple screens
-	struct aDialog* dialog = tlock_create_dialog(xi, (wor-dwidth)/2, (hor-dheight)/2, dwidth, dheight, 10);
+	// Adjust placement for multiple screens (will detect 4K screens as multiple screens)
+	int x = wor > 3000 ? 4 : 2;
+	int y = hor > 2000 ? 4 : 2;
+	struct aDialog* dialog = tlock_create_dialog(xi, (wor-dwidth)/x, (hor-dheight)/y, dwidth, dheight, 10);
 
 	LOG("completed dialog creation");LOG("entering event loop");
 
