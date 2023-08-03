@@ -1,5 +1,6 @@
-SUBDIRS=src
-EXTRA_DIST=bin
+SUBDIRS = src
+EXTRA_DIST = bin
+EXTRA_DIST += tlock.spec
 
 PHONY: gitclean
 gitclean: distclean
