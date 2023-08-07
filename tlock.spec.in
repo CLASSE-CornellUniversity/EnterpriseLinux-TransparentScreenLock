@@ -53,7 +53,7 @@ rm -rf %{buildroot}
 %post
 
 %changelog
-* Fri July 14 2023 Phillip Sorensen <pas37@cornell.edu>
+* Fri Jul 14 2023 Phillip Sorensen <pas37@cornell.edu>
 - Add Requires and additional BuildRequires
 
 * Sun May 4 2014 Andre Kaan <visitbethel@gmail.com> - 1.0.1
